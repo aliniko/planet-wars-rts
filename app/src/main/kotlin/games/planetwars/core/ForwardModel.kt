@@ -12,7 +12,7 @@ class ForwardModel(val state: GameState, val params: GameParams) {
         var nActions = 0
     }
 
-    fun step(actions: Map<Player, Action>) {
+    fun step(actions: MutableMap<Player, Action>) {
         // increment the number of updates
         applyActions(actions)
         // we use a pending map to track the incoming transporters to each planet at each step

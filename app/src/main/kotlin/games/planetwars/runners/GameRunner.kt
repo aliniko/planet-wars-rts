@@ -2,7 +2,6 @@ package games.planetwars.runners
 
 import games.planetwars.agents.PlanetWarsAgent
 import games.planetwars.agents.random.BetterRandomAgent
-import games.planetwars.agents.random.PureRandomAgent
 import games.planetwars.core.*
 
 import games.planetwars.core.GameParams

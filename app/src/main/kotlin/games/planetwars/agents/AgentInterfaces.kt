@@ -30,14 +30,17 @@ interface PlanetWarsAgent {
     * and may need other resets or initializations prior to playing
  */
 abstract class PlanetWarsPlayer : PlanetWarsAgent {
-    protected var player: Player = Player.Neutral
-    protected var params: GameParams = GameParams()
+    protected open var player: Player = Player.Neutral
+    protected open var params: GameParams = GameParams()
 
     override fun prepareToPlayAs(player: Player, params: GameParams, opponent: String?): String {
         this.player = player
         this.params = params
         return getAgentType()
     }
+
+    abstract fun mapOf(pairs: Pair<Player, Any>, pairs2: Pair<Player, Any>)
+    abstract fun mutableMapOf(pairs: Pair<Player, Char>, pairs2: Pair<Player, Char>)
 }
 
 

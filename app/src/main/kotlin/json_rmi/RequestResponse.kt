@@ -1,5 +1,6 @@
 package json_rmi
 
+import games.planetwars.core.Player
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
@@ -10,7 +11,10 @@ object RpcConstants {
     const val TARGET_AGENT = "agent"
 }
 
-interface RemoteConstructable
+interface RemoteConstructable {
+    fun getScore()
+    fun getLegalActionsForPlayer(player: Player)
+}
 
 @Serializable
 data class RemoteInvocationRequest(
@@ -20,13 +24,29 @@ data class RemoteInvocationRequest(
     val method: String,
     val objectId: String? = null,
     val args: List<JsonElement> = emptyList()
-) : RemoteConstructable
+) : RemoteConstructable {
+    override fun getScore() {
+        TODO("Not yet implemented")
+    }
+
+    override fun getLegalActionsForPlayer(player: Player) {
+        TODO("Not yet implemented")
+    }
+}
 
 @Serializable
 data class RemoteInvocationResponse(
     val status: String,
     val result: JsonElement? = null,
     val error: String? = null
-) : RemoteConstructable
+) : RemoteConstructable {
+    override fun getScore() {
+        TODO("Not yet implemented")
+    }
+
+    override fun getLegalActionsForPlayer(player: Player) {
+        TODO("Not yet implemented")
+    }
+}
 
 //val json = Json { prettyPrint = true; encodeDefaults = true }

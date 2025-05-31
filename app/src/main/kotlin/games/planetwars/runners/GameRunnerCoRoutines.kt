@@ -4,7 +4,6 @@ package games.planetwars.runners
 import games.planetwars.agents.Action
 import games.planetwars.agents.PlanetWarsAgent
 import games.planetwars.agents.random.PureRandomAgent
-import games.planetwars.agents.random.SlowRandomAgent
 import games.planetwars.core.*
 import kotlinx.coroutines.*
 import kotlin.system.measureTimeMillis
