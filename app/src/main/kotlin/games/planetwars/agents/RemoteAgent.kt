@@ -75,7 +75,7 @@ class RemoteAgent(
                 val result = jsonResp["result"]
                 if (result != null && result is JsonObject) {
                     action = json.decodeFromJsonElement(Action.serializer(), result)
-                    println("Decoded Action: $action")
+//                    println("Decoded Action: $action")
                 }
             }
             action
@@ -86,6 +86,11 @@ class RemoteAgent(
 
     override fun getAgentType(): String = runBlocking {
         ensureConnected()
+        if (!::objectId.isInitialized) {
+            // call prepare to play as
+            prepareToPlayAs(Player.Player1, GameParams(), opponent = "RemoteAgent")
+        }
+        println("In Remote Agent, object id: $objectId")
         var agentType = "Remote[$className]" // fallback
         client.webSocket(serverUrl) {
             session = this
