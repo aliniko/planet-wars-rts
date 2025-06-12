@@ -1,5 +1,6 @@
 import os
 import subprocess
+import time
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -30,7 +31,7 @@ def process_commit_hash(agent_data: dict) -> dict:
 
     return new_data
 
-def process_issue(issue: dict, base_dir: Path, github_token: str):
+def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_seconds: int = 300):
     issue_number = issue["number"]
     body = issue["body"]
     repo = "SimonLucas/planet-wars-rts-submissions"
@@ -91,12 +92,20 @@ def process_issue(issue: dict, base_dir: Path, github_token: str):
     # --- Step 4: Run evaluation script ---
     comment_on_issue(repo, issue_number, f"🎮 Running evaluation matches...", github_token)
 
+    start_time = time.time()
     try:
         subprocess.run(
-            ["./gradlew", "runEvaluation", f"--args={free_port}"],  # This assumes your Kotlin runner accepts args
-            cwd=KOTLIN_PROJECT_PATH,  # e.g., ~/planet-wars-rts/
-            check=True
+            ["./gradlew", "runEvaluation", f"--args={free_port}"],
+            cwd=KOTLIN_PROJECT_PATH,
+            check=True,
+            timeout=timeout_seconds,
         )
+    except subprocess.TimeoutExpired:
+        comment_on_issue(repo, issue_number, f"⏰ Evaluation timed out after {timeout_seconds}s.", github_token)
+        run_command(["podman", "stop", container_name])
+        run_command(["podman", "rm", container_name])
+        return
+
     except subprocess.CalledProcessError as e:
         comment_on_issue(repo, issue_number, f"❌ Evaluation failed: {e}", github_token)
         return

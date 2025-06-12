@@ -23,7 +23,7 @@ TOKEN = load_github_token()
 if not TOKEN:
     raise RuntimeError("GITHUB_TOKEN not set in environment")
 
-# print(TOKEN)
+print(TOKEN)
 
 HEADERS = {
     "Authorization": f"token {TOKEN}",
