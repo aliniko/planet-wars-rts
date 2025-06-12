@@ -101,9 +101,10 @@ commit: 9c1133cd88217abf99a892e89d95bae6fd0ed66b  # optional
 You will receive comments on your issue as your submission is processed, including:
 - ✅ Confirmation of successful build
 - 🧪 Evaluation results against baseline agents
-- 📊 A Markdown-formatted results table
+- 📊 A Markdown-formatted results table similar to the one below (possibly with updated sample agents)
 - 🏁 Final confirmation when the evaluation is complete
 
+<img width="453" alt="image" src="https://github.com/user-attachments/assets/a67bb4f6-0dc7-42b9-9cd0-dda9d85c464b" />
 
 ---
 
