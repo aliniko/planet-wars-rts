@@ -96,6 +96,7 @@ commit: 9c1133cd88217abf99a892e89d95bae6fd0ed66b  # optional
 - The `repo_url` should link to a **specific commit** (not just the repo root).
 - The `commit` field is optional if it’s already included in the URL.
 - If your repository is **private**, make sure to add `@SimonLucas` as a collaborator with read access.
+- These results are provided for feedback; your agent will compete against a wider set of agents including submitted ones for the competition results
 
 You will receive comments on your issue as your submission is processed, including:
 - ✅ Confirmation of successful build
@@ -103,6 +104,8 @@ You will receive comments on your issue as your submission is processed, includi
 - 📊 A Markdown-formatted results table
 - 🏁 Final confirmation when the evaluation is complete
 
+
 ---
+
 
 Let us know if you have any questions. Good luck, and may the best agent win! 🚀
