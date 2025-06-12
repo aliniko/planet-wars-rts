@@ -48,6 +48,14 @@ class SamplePlayerLists {
         )
     }
 
+    fun getSamplePlayers(): MutableList<PlanetWarsAgent> {
+        return mutableListOf(
+            PureRandomAgent(),
+            BetterRandomAgent(),
+            CarefulRandomAgent(),
+        )
+    }
+
     fun getFullList(): MutableList<PlanetWarsAgent> {
         return mutableListOf(
 //            PureRandomAgent(),

@@ -101,7 +101,7 @@ class RemoteAgent(
                 agentType = result.toString().trim('"')  // remove surrounding quotes
             }
         }
-        agentType
+        "$agentType (Remote)"
     }
 
     override fun processGameOver(finalState: GameState) {
