@@ -1,7 +1,8 @@
 | Rank | Agent Name | Win Rate % | Played |
 |------|------------|----------|--------|
-| 1 | BetterEvoAgent-200-50-0.5-true | 92.5 | 80 |
-| 2 | Greedy Heuristic Agent | 76.3 | 80 |
-| 3 | Careful Random Agent | 53.8 | 80 |
-| 4 | Better Random Agent | 17.5 | 80 |
-| 5 | Pure Random Agent | 10.0 | 80 |
+| 1 | BetterEvoAgent-200-50-0.5-true | 91.0 | 100 |
+| 2 | Greedy Heuristic Agent | 75.0 | 100 |
+| 3 | Careful Random Agent | 57.0 | 100 |
+| 4 | EvoAgent-200-20-0.5-true | 56.0 | 100 |
+| 5 | Better Random Agent | 13.0 | 100 |
+| 6 | Pure Random Agent | 8.0 | 100 |
