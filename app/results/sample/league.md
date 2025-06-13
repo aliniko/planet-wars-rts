@@ -1,10 +1,12 @@
-### Careful Random Agent (Remote) Evaluation
+### Strategic Heuristic Agent (Remote) Evaluation
 
 | Opponent | Win Rate % | Games Played |
 |----------|------------|---------------|
 | Pure Random Agent | 100.0 | 10 |
 | Better Random Agent | 100.0 | 10 |
-| Careful Random Agent | 70.0 | 10 |
-| **Overall Average** | **90.0** | **30** |
+| Careful Random Agent | 100.0 | 10 |
+| Greedy Heuristic Agent | 60.0 | 10 |
+| EvoAgent-200-20-0.5-true | 80.0 | 10 |
+| **Overall Average** | **88.0** | **50** |
 
-AVG=90.0
+AVG=88.0
