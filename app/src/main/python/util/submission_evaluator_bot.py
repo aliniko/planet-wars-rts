@@ -56,8 +56,8 @@ def poll_and_process(repo: str, github_token: str, base_dir: Path):
 
 
                 # Check if already being processed
-                if any(label["name"] == "processing" for label in issue["labels"]):
-                    continue
+                # if any(label["name"] == "processing" for label in issue["labels"]):
+                #     continue
 
                 print(f"⚙️ Processing issue #{issue_number}: {issue['title']} at {current_time}")
 
