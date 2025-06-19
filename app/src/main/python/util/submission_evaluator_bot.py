@@ -7,7 +7,7 @@ from typing import List
 from runner_utils.process_issue import process_issue
 
 POLL_INTERVAL = 60       # seconds
-EVALUATION_TIMEOUT = 300  # seconds (5 minutes)
+EVALUATION_TIMEOUT = 600  # seconds (10 minutes)
 # Your GitHub repo and personal access token
 REPO = "SimonLucas/planet-wars-rts-submissions"
 
