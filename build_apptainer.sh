@@ -1,11 +1,11 @@
 #!/bin/bash
-#PBS -N apptainer_build
-#PBS -l select=1:ncpus=4:mem=8gb
-#PBS -l walltime=00:30:00
-#PBS -j oe
+#$ -cwd
+#$ -N apptainer_build
+#$ -q short.q
+#$ -l h_rt=00:30:00
+#$ -o build_output.log
+#$ -e build_error.log
 
-cd $PBS_O_WORKDIR
-
-module load apptainer  # if needed; omit if already available
-
+echo "Build job started on $(hostname) at $(date)"
 apptainer build planetwars.sif planetwars.def
+echo "Build job finished at $(date)"
