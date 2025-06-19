@@ -1,24 +1,28 @@
 Bootstrap: docker
 From: gradle:8.4.0-jdk20
 
-%post
-    # Create working directory
-    mkdir -p /build
-    cd /build
-
-    # Build the jar (assumes Gradle project structure in /build)
-    gradle :app:build -x test
-
-    # Copy output to run location
-    mkdir -p /app
-    cp /build/app/build/libs/*.jar /app/app.jar
-
 %files
     . /build
 
 %environment
     export JAVA_HOME=/opt/java/openjdk
     export PATH=$JAVA_HOME/bin:$PATH
+
+%post
+    echo "+++ POST: Starting build inside container +++"
+
+    # Create build and output directories
+    mkdir -p /build
+    cd /build
+
+    echo "+++ POST: Running Gradle build with limited threads +++"
+    gradle --no-daemon -Dorg.gradle.workers.max=1 :app:build -x test || (echo "Gradle build failed!" && exit 1)
+
+    echo "+++ POST: Copying JAR to /app +++"
+    mkdir -p /app
+    cp /build/app/build/libs/*.jar /app/app.jar || (echo "JAR not found!" && exit 1)
+
+    echo "+++ POST: Build complete +++"
 
 %runscript
     exec java -jar /app/app.jar
