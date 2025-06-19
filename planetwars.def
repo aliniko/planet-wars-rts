@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: gradle:8.5.0-jdk20
+
+%post
+    # Create working directory
+    mkdir -p /build
+
+    # Move to build directory
+    cd /build
+
+    # Copy source into container (already handled by Apptainer via %files)
+    # Build the JAR (adjust path if needed)
+    gradle :app:build -x test
+
+    # Create target directory for final JAR
+    mkdir -p /app
+
+    # Move the JAR to final location
+    cp /build/app/build/libs/*.jar /app/app.jar
+
+%files
+    . /build
+
+%environment
+    export JAVA_HOME=/usr/local/openjdk-20
+    export PATH=$JAVA_HOME/bin:$PATH
+
+%runscript
+    exec java -jar /app/app.jar
