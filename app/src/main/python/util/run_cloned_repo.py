@@ -14,7 +14,8 @@ from runner_utils.utils import run_command, find_free_port, comment_on_issue, cl
     parse_yaml_from_issue_body  # previously defined helpers
 from runner_utils.agent_entry import AgentEntry  # Assuming AgentEntry is defined in agent_entry.py
 
-KOTLIN_PROJECT_PATH = Path("/Users/simonl/GitHub/planet-wars-rts/")
+home = Path(os.path.expanduser("~"))
+KOTLIN_PROJECT_PATH = home / "GitHub/planet-wars-rts/"
 
 
 def run_cloned_repo(base_dir: Path, agent_id: str, timeout_seconds: int = 600):

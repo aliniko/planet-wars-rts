@@ -7,8 +7,10 @@ from urllib.parse import urlparse
 # from agent_entry import AgentEntry  # your model
 from runner_utils.utils import run_command, find_free_port, comment_on_issue, close_issue, parse_yaml_from_issue_body  # previously defined helpers
 from runner_utils.agent_entry import AgentEntry  # Assuming AgentEntry is defined in agent_entry.py
+import os
 
-KOTLIN_PROJECT_PATH = Path("/Users/simonl/GitHub/planet-wars-rts/")
+home = Path(os.path.expanduser("~"))
+KOTLIN_PROJECT_PATH = home / "GitHub/planet-wars-rts/"
 
 def process_commit_hash(agent_data: dict) -> dict:
     """
@@ -113,7 +115,9 @@ def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_second
 
     # --- Step 5: Read Markdown results and post ---
     # md_file = Path("path/to/kotlin/project/results/league.md")
-    md_file = Path("/Users/simonl/GitHub/planet-wars-rts/app/results/sample/league.md")
+    # md_file = Path("/Users/simonl/GitHub/planet-wars-rts/app/results/sample/league.md")
+    md_file = home / "GitHub/planet-wars-rts/app/results/sample/league.md"
+    md_file = md_file.resolve()
 
     if not md_file.exists():
         comment_on_issue(repo, issue_number, "⚠️ Evaluation completed, but results file not found.", github_token)
