@@ -15,5 +15,5 @@ All teams are asked to submit 4–6 slides outlining their entry:
 - **PDF Export:** `PlanetWarsSlides.pdf`
 - **LaTeX Beamer Template:** See `beamer/`
 - **Google Slides (make a copy):**
-  https://docs.google.com/presentation/d/1xxX11UHuznFeOZ2V518xmw5aoVly2pG3SzbW8s1JM_E/edit?slide=id.p1#slide=id.p1
+  https://docs.google.com/presentation/d/1xxX11UHuznFeOZ2V518xmw5aoVly2pG3SzbW8s1JM_E/copy
 Feel free to use or adapt any format. You can also use Overleaf to edit the LaTeX Beamer version directly.
