@@ -3,6 +3,9 @@ package games.planetwars.view
 import games.planetwars.agents.random.BetterRandomAgent
 import games.planetwars.agents.random.CarefulRandomAgent
 import games.planetwars.agents.random.SmarterAgent
+import games.planetwars.agents.evo.AdvancedEvoAgent
+import games.planetwars.agents.ForwardThinker.RHEAAgent_v1_3
+
 import games.planetwars.agents.random.PureRandomAgent
 import games.planetwars.core.GameParams
 import games.planetwars.runners.GameRunner
@@ -15,7 +18,9 @@ fun main() {
 //   val agent2 = BetterRandomAgent()
 //    val agent1 = PureRandomAgent()
     val agent1 = SmarterAgent()
-    val agent2 = CarefulRandomAgent()
+//    val agent2 = CarefulRandomAgent()
+
+    val agent2 = RHEAAgent_v1_3()
 //    val agent1 = games.planetwars.agents.DoNothingAgent()
 //    val agent1 = games.planetwars.agents.BetterRandomAgent()
     val gameRunner = GameRunner(agent1, agent2, gameParams)

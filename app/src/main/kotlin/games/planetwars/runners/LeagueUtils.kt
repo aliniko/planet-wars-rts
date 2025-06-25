@@ -53,7 +53,8 @@ fun main() {
             LeagueEntry("AlphaBot", 10.0, 20),
             LeagueEntry("BetaAI", 8.0, 4),
             LeagueEntry("GammaSolver", 8.0, 3),
-            LeagueEntry("DeltaAgent", 6.0, 5)
+            LeagueEntry("DeltaAgent", 6.0, 5),
+            LeagueEntry("AdvancedEvoAgent", 6.0, 5)
         )
     )
 
