@@ -5,6 +5,9 @@ Welcome to the PlanetWars AI competition! This document describes how to package
 We support entries in **Kotlin/Java** or **Python**.  
 However, you may use any language as long as your agent speaks **WebSocket** and uses **JSON**.
 
+If you're entering a compeition linked to a conference, please
+see create a set of slides following the instructions here.
+[Slides Instructions](slides/README.md)
 > For Kotlin/Java and Python, we provide example servers and agent wrappers so you can focus entirely on your agent logic.
 
 ---
