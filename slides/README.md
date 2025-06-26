@@ -1,6 +1,10 @@
 # Planet Wars Competition Slide Templates
 
-All teams/entrants are asked to submit 4–6 slides outlining their entry:
+All teams are asked to submit 4–6 slides outlining their
+entry covering the following required sections.  Place
+the PDF of your slides in the current directory in your repo
+and name the file <EntryNameSlides.pdf>.
+
 
 ## 📋 Required Sections
 1. Team name, members, and affiliation
