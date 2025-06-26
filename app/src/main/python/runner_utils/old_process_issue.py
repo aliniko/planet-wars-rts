@@ -4,13 +4,10 @@ import time
 from pathlib import Path
 from urllib.parse import urlparse
 
-from runner_utils.competition_entries import sample_entries
 # from agent_entry import AgentEntry  # your model
 from runner_utils.utils import run_command, find_free_port, comment_on_issue, close_issue, parse_yaml_from_issue_body  # previously defined helpers
 from runner_utils.agent_entry import AgentEntry  # Assuming AgentEntry is defined in agent_entry.py
 import os
-
-from util.scan_closed_issues_for_results import load_github_token
 
 home = Path(os.path.expanduser("~"))
 KOTLIN_PROJECT_PATH = home / "GitHub/planet-wars-rts/"
@@ -36,26 +33,25 @@ def process_commit_hash(agent_data: dict) -> dict:
 
     return new_data
 
-
-def extract_and_normalize_agent_data(issue: dict, github_token: str) -> AgentEntry | None:
-    repo = "SimonLucas/planet-wars-rts-submissions"
+def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_seconds: int = 300):
     issue_number = issue["number"]
     body = issue["body"]
+    repo = "SimonLucas/planet-wars-rts-submissions"
 
+    # --- Step 1: Parse YAML ---
+    # from yaml_parser import parse_yaml_from_issue_body  # your working parser
     agent_data = parse_yaml_from_issue_body(body)
     if not agent_data:
         comment_on_issue(repo, issue_number, "❌ Could not parse submission YAML.", github_token)
-        return None
+        return
 
-    agent_data = process_commit_hash(agent_data)
+    agent_data = process_commit_hash(agent_data)  # Normalize commit hash if needed
+
     agent = AgentEntry(**agent_data)
     agent.id = agent.id.lower()
 
-    return agent
-
-
-def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, issue_number: int) -> Path | None:
-    repo = "SimonLucas/planet-wars-rts-submissions"
+    # --- Step 2: Clone and build ---
+    comment_on_issue(repo, issue_number, f"🔍 Processing submission for `{agent.id}`", github_token)
     repo_dir = base_dir / agent.id
     gradlew_path = repo_dir / "gradlew"
 
@@ -69,97 +65,69 @@ def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, i
 
     if not gradlew_path.exists():
         comment_on_issue(repo, issue_number, "❌ Gradle wrapper not found in repo.", github_token)
-        return None
+        return
 
     run_command(["./gradlew", "build"], cwd=repo_dir)
     comment_on_issue(repo, issue_number, "🔨 Project built successfully.", github_token)
 
-    return repo_dir
+    run_command(["podman", "build", "-t", f"game-server-{agent.id}", "."], cwd=repo_dir)
 
-
-def build_and_launch_container(agent: AgentEntry, repo_dir: Path, github_token: str, issue_number: int) -> int:
+    # --- Remove any previous container with the same name ---
     container_name = f"container-{agent.id}"
-    image_name = f"game-server-{agent.id}"
-
-    run_command(["podman", "build", "-t", image_name, "."], cwd=repo_dir)
-
     try:
         run_command(["podman", "rm", "-f", container_name])
     except subprocess.CalledProcessError:
+        # It's okay if the container didn't exist
         pass
 
-    port = find_free_port()
+    # --- Step 3: Start container with dynamic port ---
+    free_port = find_free_port()
+
     run_command([
         "podman", "run", "-d",
-        "-p", f"{port}:8080",
+        "-p", f"{free_port}:8080",
         "--name", container_name,
-        image_name
+        f"game-server-{agent.id}"
     ])
-    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, f"🚀 Agent launched at external port `{port}`.", github_token)
-    return port
 
+    comment_on_issue(repo, issue_number, f"🚀 Agent launched at external port `{free_port}`.", github_token)
 
-def run_evaluation(port: int, github_token: str, issue_number: int, timeout_seconds: int = 300) -> bool:
-    repo = "SimonLucas/planet-wars-rts-submissions"
+    # --- Step 4: Run evaluation script ---
     comment_on_issue(repo, issue_number, f"🎮 Running evaluation matches...", github_token)
 
+    start_time = time.time()
     try:
         subprocess.run(
-            ["./gradlew", "runEvaluation", f"--args={port}"],
+            ["./gradlew", "runEvaluation", f"--args={free_port}"],
             cwd=KOTLIN_PROJECT_PATH,
             check=True,
             timeout=timeout_seconds,
         )
-        return True
     except subprocess.TimeoutExpired:
         comment_on_issue(repo, issue_number, f"⏰ Evaluation timed out after {timeout_seconds}s.", github_token)
+        run_command(["podman", "stop", container_name])
+        run_command(["podman", "rm", container_name])
+        return
+
     except subprocess.CalledProcessError as e:
         comment_on_issue(repo, issue_number, f"❌ Evaluation failed: {e}", github_token)
+        return
 
-    return False
+    # --- Step 5: Read Markdown results and post ---
+    # md_file = Path("path/to/kotlin/project/results/league.md")
+    # md_file = Path("/Users/simonl/GitHub/planet-wars-rts/app/results/sample/league.md")
+    md_file = home / "GitHub/planet-wars-rts/app/results/sample/league.md"
+    md_file = md_file.resolve()
 
-
-def post_results(github_token: str, issue_number: int):
-    md_file = Path.home() / "GitHub/planet-wars-rts/app/results/sample/league.md"
     if not md_file.exists():
-        comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, "⚠️ Evaluation completed, but results file not found.", github_token)
+        comment_on_issue(repo, issue_number, "⚠️ Evaluation completed, but results file not found.", github_token)
     else:
         markdown = md_file.read_text()
-        comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, f"📊 **Results:**\n\n{markdown}", github_token)
+        comment_on_issue(repo, issue_number, f"📊 **Results:**\n\n{markdown}", github_token)
 
+    # --- Step 6: Shut down and close ---
+    run_command(["podman", "stop", f"container-{agent.id}"])
+    run_command(["podman", "rm", f"container-{agent.id}"])
+    comment_on_issue(repo, issue_number, "✅ Evaluation complete. Stopping container.", github_token)
 
-def stop_and_cleanup_container(agent_id: str, github_token: str, issue_number: int):
-    container_name = f"container-{agent_id}"
-    run_command(["podman", "stop", container_name])
-    run_command(["podman", "rm", container_name])
-    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, "✅ Evaluation complete. Stopping container.", github_token)
-
-
-def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_seconds: int = 300):
-    issue_number = issue["number"]
-
-    # Step 1: Extract agent info
-    agent = extract_and_normalize_agent_data(issue, github_token)
-    if not agent:
-        return
-
-    # Step 2: Clone and build repo
-    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, f"🔍 Processing submission for `{agent.id}`", github_token)
-    repo_dir = clone_and_build_repo(agent, base_dir, github_token, issue_number)
-    if not repo_dir:
-        return
-
-    # Step 3: Launch container
-    port = build_and_launch_container(agent, repo_dir, github_token, issue_number)
-
-    # Step 4: Run evaluation
-    success = run_evaluation(port, github_token, issue_number, timeout_seconds)
-
-    # Step 5: Report results
-    if success:
-        post_results(github_token, issue_number)
-
-    # Step 6: Cleanup
-    stop_and_cleanup_container(agent.id, github_token, issue_number)
-    close_issue("SimonLucas/planet-wars-rts-submissions", issue_number, github_token)
-
+    close_issue(repo, issue_number, github_token)
