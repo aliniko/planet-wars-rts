@@ -4,7 +4,6 @@ import time
 from pathlib import Path
 from urllib.parse import urlparse
 
-from runner_utils.competition_entries import sample_entries
 # from agent_entry import AgentEntry  # your model
 from runner_utils.utils import run_command, find_free_port, comment_on_issue, close_issue, parse_yaml_from_issue_body  # previously defined helpers
 from runner_utils.agent_entry import AgentEntry  # Assuming AgentEntry is defined in agent_entry.py
