@@ -1,6 +1,12 @@
-| Rank | Agent Name | Win Rate % | Played |
-|------|------------|----------|--------|
-| 1 | EvoAgent-200-50-0.8-true | 84.3 | 540 |
-| 2 | Careful Random Agent | 81.1 | 540 |
-| 3 | Better Random Agent | 18.9 | 540 |
-| 4 | Pure Random Agent | 15.7 | 540 |
+### GreedyFullObservableAgent (Remote) Evaluation
+
+| Opponent | Win Rate % | Games Played |
+|----------|------------|---------------|
+| Pure Random Agent | 100.0 | 10 |
+| Better Random Agent | 100.0 | 10 |
+| Careful Random Agent | 90.0 | 10 |
+| Greedy Heuristic Agent | 60.0 | 10 |
+| EvoAgent-200-20-0.5-true | 80.0 | 10 |
+| **Overall Average** | **86.0** | **50** |
+
+AVG=86.0
