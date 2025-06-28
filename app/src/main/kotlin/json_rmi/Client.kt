@@ -1,27 +1,12 @@
 package json_rmi
 
-import games.planetwars.agents.Action
-import games.planetwars.core.GameParams
-import games.planetwars.core.GameState
-import games.planetwars.core.GameStateFactory
 import games.planetwars.core.Player
 import kotlinx.serialization.json.*
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.modules.SerializersModuleBuilder
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import kotlinx.serialization.PolymorphicSerializer
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -116,44 +101,4 @@ suspend fun DefaultClientWebSocketSession.endAgent(objectId: String) {
     send(json.encodeToString(RemoteInvocationRequest.serializer(), request))
     val response = (incoming.receive() as Frame.Text).readText()
     println("END Response: $response")
-}
-
-fun main() = runBlocking {
-    val client = HttpClient(CIO) {
-        install(WebSockets)
-    }
-
-    val className = "games.planetwars.agents.random.CarefulRandomAgent"
-    client.webSocket("ws://localhost:8080/ws") {
-        val objectId = initAgent(className)
-
-        val params = GameParams(numPlanets = 10, initialNeutralRatio = 0.0)
-
-        val prepareResponse = invokeRemoteMethod(
-            objectId=objectId,
-            method="prepareToPlayAs",
-            args = listOf(Player.Player1, params, "DummyOpponent", null),
-        )
-        println("prepareToPlayAs Response: $prepareResponse")
-
-        val gameState = GameStateFactory(params).createGame()
-        val actionResponse = invokeRemoteMethod(
-            objectId,
-            "getAction",
-            args = listOf(gameState),
-        )
-        println("getAction Response: $actionResponse")
-
-        // also check what type the response is
-        val jsonResp = json.parseToJsonElement(actionResponse).jsonObject
-        val result = jsonResp["result"]
-        if (result != null && result is JsonObject) {
-            val action = json.decodeFromJsonElement(Action.serializer(), result)
-            println("Decoded Action: $action")
-        }
-
-        endAgent(objectId)
-    }
-
-    client.close()
 }
