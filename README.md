@@ -16,8 +16,9 @@ To run games with a GUI, use the `games.planetwars.view.RunVisualGame` class.
 The following features are ready for community testing:
 
 * containerised version (PodMan or Docker)
--- see [Submission Instructions](submit_entry.md)
-* [Python sample](app/src/main/python/client_server/game_agent_server.py) 
+-- see [Submission Instructions](submit_entry.md) - updated with `Python` instructions.
+
+[//]: # (* [Python sample]&#40;app/src/main/python/client_server/game_agent_server.py&#41; )
 
 
 
