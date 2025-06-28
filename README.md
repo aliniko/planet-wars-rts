@@ -185,16 +185,14 @@ For debugging and development run your code locally by
 extending the examples in the `games.planetwars.runners` package,
 if developing in Kotlin, Java or any JVM language.
 
-For other languages, follow the examples in the Python
-directory (**coming soon**).
 
-For competitions, you can deploy your agent to a PodMan
+For competitions, deploy your agent to a Docker / PodMan
 container, and provide the link via the competition
-interface. (**coming soon**)
+interface.  See  
+[Submission Instructions](submit_entry.md)
+for details, including how to run a Python agent with
+a trained neural network model.
 
-### Loading a learned model
-
-(**coming soon**)
 
 ## The codebase and philosophy
 
@@ -214,6 +212,7 @@ Running this with the sample agents will produce a league table similar to the f
 | 2 | Better Random Agent | 69.0 | 200 |
 | 3 | Careful Random Agent | 1.5 | 200 |
 
-For compeitions we aim to run sufficient games to arrive at a stable rank order of the agents.
+For competitions we aim to run sufficient games 
+to arrive at a stable rank order of the agents.
 
 
