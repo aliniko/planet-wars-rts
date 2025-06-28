@@ -61,6 +61,7 @@ def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str) -
         print("❌ Gradle wrapper not found in repo.")
         return None
 
+    gradlew_path.chmod(gradlew_path.stat().st_mode | 0o111)  # Add executable bit
     run_command(["./gradlew", "build"], cwd=repo_dir)
     print("🔨 Project built successfully.", github_token)
 
@@ -90,7 +91,7 @@ def build_and_launch_container(agent: AgentEntry, repo_dir: Path) -> int:
 
 
 def run_evaluation(port: int, timeout_seconds: int = 300) -> bool:
-    repo = "SimonLucas/planet-wars-rts-submissions"
+
     print(f"🎮 Running evaluation matches...")
     try:
         subprocess.run(

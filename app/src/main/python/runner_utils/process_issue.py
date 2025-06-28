@@ -71,6 +71,7 @@ def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, i
         comment_on_issue(repo, issue_number, "❌ Gradle wrapper not found in repo.", github_token)
         return None
 
+    gradlew_path.chmod(gradlew_path.stat().st_mode | 0o111)  # Add executable bit in case not set
     run_command(["./gradlew", "build"], cwd=repo_dir)
     comment_on_issue(repo, issue_number, "🔨 Project built successfully.", github_token)
 
