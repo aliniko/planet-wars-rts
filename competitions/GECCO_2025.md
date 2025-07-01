@@ -1,5 +1,8 @@
 # GECCO 2025 Specifics
 
+Run as a competition in conjunection with - [GECCO 2025](https://gecco-2025.sigevo.org/Competition?itemId=5108)
+
+
 ## Submission Deadline
 
 #### July 9, 2025, Anywhere on Earth.

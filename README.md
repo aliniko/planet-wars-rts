@@ -3,7 +3,6 @@
 <img width="406" alt="image" src="https://github.com/user-attachments/assets/d70c0d2a-bd57-4795-9ec4-fb35a401f8f3" alt="QR Code" width="150" align="right"/>
 
 
-## note: currently in early access: 
 
 The code is in early access, but the interfaces
 are intended to be stable both for the fully observable and partially
@@ -25,17 +24,22 @@ The following features are ready for community testing:
 ## Introduction
 
 This repo contains the code and instructions for a series
-of Planet Wars Real-Time Strategy (RTS) games.  So far it has been accepted to
+of Planet Wars Real-Time Strategy (RTS) games.  The challenge for
+AI agents is to play well across a wide range of different
+game parameters, and against a wide
+range of opponent strategies.
+
+For a quick idea of the game, watch some sample
+[AI agents play live](https://simonlucas.github.io/typescript-play/).
+
+So far it has been accepted to
 run in conjunction with the following conferences:
 
-- [GECCO 2025 Conference Page](https://gecco-2025.sigevo.org/Competition?itemId=5108)  
--- see [GECCO 2025 Competition Specifics](competitions/GECCO_2025.md)
+- [GECCO 2025 Competition Specifics](competitions/GECCO_2025.md) (Deadline July 9, 2025)
 - [IEEE Conference on Games 2025](https://cog2025.inesc-id.pt/competitions/)
--- Specifics TBA
+-- Specifics TBA, Deadline August 8, 2025.
   
-
-More details on the variants used for each conference will be published later.
-
+  
 Figures below show a fully observable and a partially observable game in play.
 
 <img width="638" alt="image" src="https://github.com/user-attachments/assets/dc702b7c-745d-44e9-a7b9-d172ecd65478" />
