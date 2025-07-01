@@ -52,14 +52,22 @@ def extract_and_normalize_agent_data(issue: dict, github_token: str) -> AgentEnt
 
     return agent
 
-
 def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, issue_number: int) -> Path | None:
+    from urllib.parse import quote
+    import shutil
+
     repo = "SimonLucas/planet-wars-rts-submissions"
     repo_dir = base_dir / agent.id
     gradlew_path = repo_dir / "gradlew"
 
+    # Remove broken clone dirs
+    if repo_dir.exists() and not (repo_dir / ".git").exists():
+        shutil.rmtree(repo_dir)
+
     if not repo_dir.exists():
-        run_command(["git", "clone", agent.repo_url, str(repo_dir)])
+        token = quote(github_token)
+        authenticated_url = agent.repo_url.replace("https://", f"https://{token}@")
+        run_command(["git", "clone", authenticated_url, str(repo_dir)])
         comment_on_issue(repo, issue_number, "📦 Repository cloned.", github_token)
 
     if agent.commit:
@@ -70,11 +78,34 @@ def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, i
         comment_on_issue(repo, issue_number, "❌ Gradle wrapper not found in repo.", github_token)
         return None
 
-    gradlew_path.chmod(gradlew_path.stat().st_mode | 0o111)  # Add executable bit in case not set
+    gradlew_path.chmod(gradlew_path.stat().st_mode | 0o111)  # Ensure executable
     run_command(["./gradlew", "build"], cwd=repo_dir)
     comment_on_issue(repo, issue_number, "🔨 Project built successfully.", github_token)
 
     return repo_dir
+
+# def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, issue_number: int) -> Path | None:
+#     repo = "SimonLucas/planet-wars-rts-submissions"
+#     repo_dir = base_dir / agent.id
+#     gradlew_path = repo_dir / "gradlew"
+#
+#     if not repo_dir.exists():
+#         run_command(["git", "clone", agent.repo_url, str(repo_dir)])
+#         comment_on_issue(repo, issue_number, "📦 Repository cloned.", github_token)
+#
+#     if agent.commit:
+#         run_command(["git", "checkout", agent.commit], cwd=repo_dir)
+#         comment_on_issue(repo, issue_number, f"📌 Checked out commit `{agent.commit}`", github_token)
+#
+#     if not gradlew_path.exists():
+#         comment_on_issue(repo, issue_number, "❌ Gradle wrapper not found in repo.", github_token)
+#         return None
+#
+#     gradlew_path.chmod(gradlew_path.stat().st_mode | 0o111)  # Add executable bit in case not set
+#     run_command(["./gradlew", "build"], cwd=repo_dir)
+#     comment_on_issue(repo, issue_number, "🔨 Project built successfully.", github_token)
+#
+#     return repo_dir
 
 
 def build_and_launch_container(agent: AgentEntry, repo_dir: Path, github_token: str, issue_number: int) -> int:
