@@ -62,6 +62,7 @@ class SamplePlayerLists {
             PureRandomAgent(),
             BetterRandomAgent(),
             CarefulRandomAgent(),
+
        //     AdvancedEvoAgent(),
 
             SmarterAgent(),

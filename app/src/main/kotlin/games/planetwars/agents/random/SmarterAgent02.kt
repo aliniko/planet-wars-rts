@@ -5,7 +5,8 @@ import games.planetwars.agents.PlanetWarsPlayer
 import games.planetwars.core.GameState
 import games.planetwars.core.Planet
 
-class SmarterAgent02.kt : PlanetWarsPlayer() {
+/*
+class SmarterAgent02 : PlanetWarsPlayer() {
 
     override fun getAction(gameState: GameState): Action {
         val myPlanets = gameState.planets.filter { it.owner == player && it.nShips > 0 }
@@ -70,3 +71,5 @@ class SmarterAgent02.kt : PlanetWarsPlayer() {
         return "Optimized SmarterAgent02"
     }
 }
+
+ */

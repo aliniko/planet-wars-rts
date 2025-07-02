@@ -1,8 +1,6 @@
 Thank you for providing your agent's path:  
 F:\PlanetWarAIProject\app\src\main\kotlin\games\planetwars\agents\random\SmarterAgent.kt
 
-It looks like your agent is implemented in Kotlin. I'll create a step-by-step guide and a full Dockerfile example to containerize your Kotlin SmarterAgent for submission to the competition.
-
 ---
 
 ## 1. Project Structure
@@ -117,3 +115,27 @@ docker run --rm smarteragent
 - If your main class is different, update the `mainClass.set(...)` value.
 
 ---
+
+
+
+
+
+
+------
+# Planet Wars RTS Competition Submission Instructions
+
+To submit your agent to the competition, follow these steps:
+
+1. Go to the [Issues page of the competition repository](https://github.com/SimonLucas/planet-wars-rts-submissions/issues).
+2. Click on “New issue”.
+3. Title your issue clearly, e.g., `Submission: Smarteragent`.
+4. In the issue body, include a YAML or JSON description like:
+
+   ```yaml
+   id: smarteragent
+   repo_url: https://github.com/YOUR_GITHUB_USERNAME/YOUR_AGENT_REPO
+   port: 9001
+   commit: <commit_hash>  # optional
+   ```
+
+5. If your agent repo is private, add `@SimonLucas` as a collaborator with at least read access.

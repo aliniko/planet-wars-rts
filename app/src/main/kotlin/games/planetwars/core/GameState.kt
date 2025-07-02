@@ -48,6 +48,8 @@ data class GameState (
     val planets: List<Planet>,  // list of planets does not change in a given game
     var gameTick: Int=0,
 ) : RemoteConstructable {
+    // val fleets: Any
+
     fun deepCopy(): GameState {
         val copiedPlanets = planets.map { planet ->
             Planet(
