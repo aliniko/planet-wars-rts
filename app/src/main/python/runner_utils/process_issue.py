@@ -5,7 +5,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 # from agent_entry import AgentEntry  # your model
-from runner_utils.utils import run_command, find_free_port, comment_on_issue, close_issue, parse_yaml_from_issue_body  # previously defined helpers
+from runner_utils.utils import run_command, find_free_port, comment_on_issue, close_issue, \
+    parse_yaml_from_issue_body  # previously defined helpers
 from runner_utils.agent_entry import AgentEntry  # Assuming AgentEntry is defined in agent_entry.py
 import os
 
@@ -13,6 +14,7 @@ from util.scan_closed_issues_for_results import load_github_token
 
 home = Path(os.path.expanduser("~"))
 KOTLIN_PROJECT_PATH = home / "GitHub/planet-wars-rts/"
+
 
 def process_commit_hash(agent_data: dict) -> dict:
     """
@@ -52,8 +54,9 @@ def extract_and_normalize_agent_data(issue: dict, github_token: str) -> AgentEnt
 
     return agent
 
+
 def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, issue_number: int) -> Path | None:
-    from urllib.parse import quote
+    from urllib.parse import quote, urlparse, urlunparse
     import shutil
 
     repo = "SimonLucas/planet-wars-rts-submissions"
@@ -65,10 +68,16 @@ def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, i
         shutil.rmtree(repo_dir)
 
     if not repo_dir.exists():
-        token = quote(github_token)
-        authenticated_url = agent.repo_url.replace("https://", f"https://{token}@")
-        run_command(["git", "clone", authenticated_url, str(repo_dir)])
-        comment_on_issue(repo, issue_number, "📦 Repository cloned.", github_token)
+        parsed = urlparse(agent.repo_url)
+        authenticated_netloc = f"{quote(github_token)}@{parsed.netloc}"
+        authenticated_url = urlunparse(parsed._replace(netloc=authenticated_netloc))
+
+        try:
+            run_command(["git", "clone", authenticated_url, str(repo_dir)])
+            comment_on_issue(repo, issue_number, "📦 Repository cloned.", github_token)
+        except subprocess.CalledProcessError as e:
+            comment_on_issue(repo, issue_number, f"❌ Clone failed: {e}", github_token)
+            return None
 
     if agent.commit:
         run_command(["git", "checkout", agent.commit], cwd=repo_dir)
@@ -83,29 +92,6 @@ def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, i
     comment_on_issue(repo, issue_number, "🔨 Project built successfully.", github_token)
 
     return repo_dir
-
-# def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, issue_number: int) -> Path | None:
-#     repo = "SimonLucas/planet-wars-rts-submissions"
-#     repo_dir = base_dir / agent.id
-#     gradlew_path = repo_dir / "gradlew"
-#
-#     if not repo_dir.exists():
-#         run_command(["git", "clone", agent.repo_url, str(repo_dir)])
-#         comment_on_issue(repo, issue_number, "📦 Repository cloned.", github_token)
-#
-#     if agent.commit:
-#         run_command(["git", "checkout", agent.commit], cwd=repo_dir)
-#         comment_on_issue(repo, issue_number, f"📌 Checked out commit `{agent.commit}`", github_token)
-#
-#     if not gradlew_path.exists():
-#         comment_on_issue(repo, issue_number, "❌ Gradle wrapper not found in repo.", github_token)
-#         return None
-#
-#     gradlew_path.chmod(gradlew_path.stat().st_mode | 0o111)  # Add executable bit in case not set
-#     run_command(["./gradlew", "build"], cwd=repo_dir)
-#     comment_on_issue(repo, issue_number, "🔨 Project built successfully.", github_token)
-#
-#     return repo_dir
 
 
 def build_and_launch_container(agent: AgentEntry, repo_dir: Path, github_token: str, issue_number: int) -> int:
@@ -126,7 +112,8 @@ def build_and_launch_container(agent: AgentEntry, repo_dir: Path, github_token: 
         "--name", container_name,
         image_name
     ])
-    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, f"🚀 Agent launched at external port `{port}`.", github_token)
+    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number,
+                     f"🚀 Agent launched at external port `{port}`.", github_token)
     return port
 
 
@@ -153,17 +140,20 @@ def run_evaluation(port: int, github_token: str, issue_number: int, timeout_seco
 def post_results(github_token: str, issue_number: int):
     md_file = Path.home() / "GitHub/planet-wars-rts/app/results/sample/league.md"
     if not md_file.exists():
-        comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, "⚠️ Evaluation completed, but results file not found.", github_token)
+        comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number,
+                         "⚠️ Evaluation completed, but results file not found.", github_token)
     else:
         markdown = md_file.read_text()
-        comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, f"📊 **Results:**\n\n{markdown}", github_token)
+        comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, f"📊 **Results:**\n\n{markdown}",
+                         github_token)
 
 
 def stop_and_cleanup_container(agent_id: str, github_token: str, issue_number: int):
     container_name = f"container-{agent_id}"
     run_command(["podman", "stop", container_name])
     run_command(["podman", "rm", container_name])
-    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, "✅ Evaluation complete. Stopping container.", github_token)
+    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number,
+                     "✅ Evaluation complete. Stopping container.", github_token)
 
 
 def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_seconds: int = 300):
@@ -175,7 +165,8 @@ def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_second
         return
 
     # Step 2: Clone and build repo
-    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number, f"🔍 Processing submission for `{agent.id}`", github_token)
+    comment_on_issue("SimonLucas/planet-wars-rts-submissions", issue_number,
+                     f"🔍 Processing submission for `{agent.id}`", github_token)
     repo_dir = clone_and_build_repo(agent, base_dir, github_token, issue_number)
     if not repo_dir:
         return
@@ -193,4 +184,3 @@ def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_second
     # Step 6: Cleanup
     stop_and_cleanup_container(agent.id, github_token, issue_number)
     close_issue("SimonLucas/planet-wars-rts-submissions", issue_number, github_token)
-
