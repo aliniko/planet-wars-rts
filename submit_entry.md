@@ -78,6 +78,18 @@ fun main() {
 }
 ```
 
+
+## ☕ Python Submission
+
+As for the Kotlin/Java submission, your Python project must produce a 
+single Docker image that runs the WebSocket server.
+
+A complete example, including loading a pre-trained 
+PyTorch Neural Network model is availale in
+this public repository: https://github.com/Priwinn/planet-wars-rts/
+Adapt this to your own agent logic and models.
+
+
 ---
 
 ## 📤 Submitting Your Agent via GitHub Issue

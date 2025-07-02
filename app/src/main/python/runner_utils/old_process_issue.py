@@ -50,6 +50,8 @@ def process_issue(issue: dict, base_dir: Path, github_token: str, timeout_second
     agent = AgentEntry(**agent_data)
     agent.id = agent.id.lower()
 
+    print(f"Processing agent data: {agent}")
+
     # --- Step 2: Clone and build ---
     comment_on_issue(repo, issue_number, f"🔍 Processing submission for `{agent.id}`", github_token)
     repo_dir = base_dir / agent.id

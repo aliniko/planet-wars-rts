@@ -49,6 +49,7 @@ fun main(args: Array<String>) {
 
     val gameParams = GameParams(numPlanets = 20, maxTicks = 2000)
     val baselineAgents = SamplePlayerLists().getRandomTrio()
+//    baselineAgents.clear()
     baselineAgents.add(GreedyHeuristicAgent())
     baselineAgents.add(SimpleEvoAgent())
     val remoteAgent = RemoteAgent("<unused - name retrieved from remoteAgent>", port = remotePort)
