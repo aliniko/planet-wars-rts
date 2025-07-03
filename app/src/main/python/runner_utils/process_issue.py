@@ -38,6 +38,26 @@ def process_commit_hash(agent_data: dict) -> dict:
     return new_data
 
 
+import re
+
+def sanitize_image_tag(name: str) -> str:
+    """
+    Sanitizes an arbitrary string to a valid Docker/Podman image tag.
+    Rules:
+    - Lowercase letters, digits, underscore, period, and dash only
+    - Must start and end with alphanumeric characters
+    - Disallowed characters are replaced with a dash
+    - Multiple consecutive non-valid chars collapsed into a single dash
+    """
+    # Lowercase and replace invalid chars with '-'
+    name = name.lower()
+    name = re.sub(r'[^a-z0-9._-]+', '-', name)  # replace invalid chars with '-'
+    name = re.sub(r'-{2,}', '-', name)          # collapse multiple dashes
+    name = name.strip('-._')                    # remove leading/trailing special chars
+    if not name:
+        raise ValueError("Sanitized image tag is empty")
+    return name
+
 def extract_and_normalize_agent_data(issue: dict, github_token: str) -> AgentEntry | None:
     repo = "SimonLucas/planet-wars-rts-submissions"
     issue_number = issue["number"]
@@ -50,9 +70,14 @@ def extract_and_normalize_agent_data(issue: dict, github_token: str) -> AgentEnt
 
     agent_data = process_commit_hash(agent_data)
     agent = AgentEntry(**agent_data)
-    agent.id = agent.id.lower()
+    try:
+        agent.id = sanitize_image_tag(agent.id)
+    except ValueError as e:
+        comment_on_issue(repo, issue_number, f"❌ Invalid agent ID after sanitization: {e}", github_token)
+        return None
 
     return agent
+
 
 
 def clone_and_build_repo(agent: AgentEntry, base_dir: Path, github_token: str, issue_number: int) -> Path | None:
