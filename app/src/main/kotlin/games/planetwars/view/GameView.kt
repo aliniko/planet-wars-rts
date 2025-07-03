@@ -14,7 +14,7 @@ class GameView(
     var paused: Boolean = false,
     var showInfoFor: Set<Player> = setOf(
         Player.Player1,
-//        Player.Player2,
+        Player.Player2,
 //        Player.Neutral,
     ),
 ) : XApp {
