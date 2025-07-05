@@ -42,5 +42,5 @@ class GreedyHeuristicAgent : PlanetWarsPlayer() {
         return Action(player, source.id, target.id, shipsToSend)
     }
 
-    override fun getAgentType(): String = "Greedy Heuristic Agent"
+    override fun getAgentType(): String = "SmarterAgent4"
 }
