@@ -17,6 +17,7 @@ import games.planetwars.agents.random.PureRandomAgent
 import games.planetwars.agents.random.RHEAAgent
 import games.planetwars.agents.random.RHEAAgent1
 import games.planetwars.agents.random.SmarterAgent
+import games.planetwars.agents.random.SmarterAgent5
 import games.planetwars.core.GameParams
 import games.planetwars.core.Player
 
@@ -39,7 +40,7 @@ fun main() {
 //    agents.add(remoteAgent)
 //    val agents = SamplePlayerLists().getFullList()
 //    agents.add(DoNothingAgent())
-    val league = RoundRobinLeague(agents, gameParams = gameParams, gamesPerPair = 100, runRemoteAgents = true)
+    val league = RoundRobinLeague(agents, gameParams = gameParams, gamesPerPair = 2, runRemoteAgents = true)
     val results = league.runRoundRobin()
     // use the League utils to print the results
     println(results)
@@ -66,7 +67,7 @@ class SamplePlayerLists {
        //     AdvancedEvoAgent(),
 
             SmarterAgent(),
-//            RHEAAgent1(),
+       //       RHEAAgent1(),
 
         )
     }
@@ -97,7 +98,7 @@ class SamplePlayerLists {
 
 data class RoundRobinLeague(
     val agents: List<PlanetWarsAgent>,
-    val gamesPerPair: Int = 10,
+    val gamesPerPair: Int = 5,
     val gameParams: GameParams = GameParams(numPlanets = 20),
     val runRemoteAgents: Boolean = false, // if true, will run remote agents
     val timeout: Long = 10, // timeout in milliseconds for remote agents
